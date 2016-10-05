@@ -1,12 +1,16 @@
 
 import java.util.Scanner;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 
 /**
  *
  * @author Husni
  */
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        MenuHandler menuHandler = new MenuHandler();
         Scanner scanner = new Scanner(System.in);
         int menu = 0;
         while (menu != 7) {
@@ -23,25 +27,26 @@ public class Main {
             
             menu = scanner.nextInt();
             switch(menu) {
-                case 1:
-                    System.out.println("Load arff data menu");
-                    break;
-                case 2:
-                    System.out.println("remove attribute menu");
-                    break;
-                case 3:
-                    System.out.println("build classifier menu");
-                    break;
-                case 4:
-                    System.out.println("test model menu");
-                    break;
-                case 5:
-                    System.out.println("save model menu");
-                    break;
-                case 6: 
-                    System.out.println("load model menu");
-                    break;
+            case 1:
+                menuHandler.loadDataMenu();
+                break;
+            case 2:
+                menuHandler.removeAttributeMenu();
+                break;
+            case 3:
+                menuHandler.buildClassifierMenu();
+                break;
+            case 4:
+                menuHandler.testModelMenu();
+                break;
+            case 5:
+                System.out.println("save model menu");
+                break;
+            case 6: 
+                System.out.println("load model menu");
+                break;
             }
+            
         }
     }
 }
