@@ -20,7 +20,7 @@ import weka.filters.unsupervised.attribute.*;
  *
  * @author adarwawan
  */
-public class main {
+public class Access {
 
     /**
      * @param args the command line arguments
