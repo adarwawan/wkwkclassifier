@@ -65,13 +65,13 @@ public class Access {
         newData = Filter.useFilter(data, resample);
         
         // Build Classifier
-        Id3 tree = new Id3();         // new instance of tree
+        MyId3 tree = new MyId3();         // new instance of tree
         tree.buildClassifier(data);   // build classifier
         
         // Evaluation with test set
         Instances testSet = testSource.getDataSet();
         // train classifier
-        Classifier cls = new Id3();
+        Classifier cls = new MyId3();
         cls.buildClassifier(data);
         // evaluate classifier and print some statistics
         Evaluation eval = new Evaluation(data);
