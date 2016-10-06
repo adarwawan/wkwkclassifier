@@ -31,14 +31,10 @@ public class Access {
      * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            System.out.println("Masukan salah...");
-            System.exit(1);
-        }
         
         // Read Dataset (arff, csv)
-        DataSource source = new DataSource(args[0]);
-        DataSource testSource = new DataSource(args[1]);
+        DataSource source = new DataSource("../data/weather.nominal.arff");
+        //DataSource testSource = new DataSource(args[1]);
         Instances data = source.getDataSet();
         
         if (data.classIndex() == -1) {
@@ -46,40 +42,41 @@ public class Access {
         }
         
         // Remove attr
-        String[] rangeOps = new String[2];
-        rangeOps[0] = "-R";                                    // "range"
-        rangeOps[1] = args[2];                                 // first attribute
-        Remove remove = new Remove();                         // new instance of filter
-        remove.setOptions(rangeOps);                           // set options
-        remove.setInputFormat(data);                          // inform filter about dataset **AFTER** setting options
-        Instances newData = Filter.useFilter(data, remove);   // apply filter
-        
-        // Filter Resample
-        String[] biasOps = new String[2];
-        biasOps[0] = "-B";                                    // "range"
-        biasOps[1] = args[3];                                 // first attribute
-        Resample resample = new Resample();
-        resample.setOptions(biasOps);
-        resample.setInputFormat(data);
-        newData = Filter.useFilter(data, resample);
-        
+//        String[] rangeOps = new String[2];
+//        rangeOps[0] = "-R";                                    // "range"
+//        rangeOps[1] = args[2];                                 // first attribute
+//        Remove remove = new Remove();                         // new instance of filter
+//        remove.setOptions(rangeOps);                           // set options
+//        remove.setInputFormat(data);                          // inform filter about dataset **AFTER** setting options
+//        Instances newData = Filter.useFilter(data, remove);   // apply filter
+//        
+//        // Filter Resample
+//        String[] biasOps = new String[2];
+//        biasOps[0] = "-B";                                    // "range"
+//        biasOps[1] = args[3];                                 // first attribute
+//        Resample resample = new Resample();
+//        resample.setOptions(biasOps);
+//        resample.setInputFormat(data);
+//        newData = Filter.useFilter(data, resample);
+//        
         // Build Classifier
-        MyId3 tree = new MyId3();         // new instance of tree
+        MyC45 tree = new MyC45();         // new instance of tree
         tree.buildClassifier(data);   // build classifier
         
         // Evaluation with test set
-        Instances testSet = testSource.getDataSet();
+        //Instances testSet = testSource.getDataSet();
         // train classifier
-        Classifier cls = new MyId3();
-        cls.buildClassifier(data);
+        //Classifier cls = new MyId3();
+        //cls.buildClassifier(data);
         // evaluate classifier and print some statistics
-        Evaluation eval = new Evaluation(data);
-        eval.evaluateModel(cls, testSet);
-        System.out.println(eval.toSummaryString("\nResults\n======\n", false));
+        //Evaluation eval = new Evaluation(data);
+        //eval.evaluateModel(cls, testSet);
+        //System.out.println(eval.toSummaryString("\nResults\n======\n", false));
         
         // Evaluation with 10 Fold-CV
-        Evaluation evalCV = new Evaluation(newData);
-        evalCV.crossValidateModel(tree, newData, 10, new Random(1));
+        Evaluation evalCV = new Evaluation(data);
+        evalCV.crossValidateModel(tree, data, 10, new Random(1));
+        System.out.println(evalCV.toSummaryString("\nResults\n======\n", false));
     }
     
 }
