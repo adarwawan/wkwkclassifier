@@ -52,7 +52,7 @@ public class MyC45 extends AbstractClassifier {
     /**
      * Threshold for numeric value.
      */
-    private double attributeThreshold;
+    private double attrThreshold;
 
         
     @Override
@@ -91,7 +91,7 @@ public class MyC45 extends AbstractClassifier {
                 return successors[(int) data.value(splitAttribute)].classifyInstance(data);
             }
             else if (splitAttribute.isNumeric()) {
-                if (data.value(splitAttribute) < attributeThreshold) {
+                if (data.value(splitAttribute) < attrThreshold) {
                     return successors[0].classifyInstance(data);
                 }
                 else {
@@ -121,10 +121,13 @@ public class MyC45 extends AbstractClassifier {
                 infoGains[i] = computeInfoGain(data, data.attribute(i));                
             }
             else if (m_attr.isNumeric()) {
-                
+                infoGains[i] = computeInfoGainCont(data, data.attribute(i), bestThreshold(data, m_attr));
             }
         }
         splitAttribute = data.attribute(Utils.maxIndex(infoGains));
+        if (splitAttribute.isNumeric()) {
+            attrThreshold = bestThreshold(data, splitAttribute);
+        }
         
         if (Utils.eq(infoGains[splitAttribute.index()], 0)) {
             splitAttribute = null;
@@ -143,7 +146,7 @@ public class MyC45 extends AbstractClassifier {
                 splitData = splitData(data, splitAttribute);
             } 
             else if (splitAttribute.isNumeric()) {
-                
+                splitData = splitDataCont(data, splitAttribute, attrThreshold);
             }
             
             if (splitAttribute.isNominal()) {
@@ -154,7 +157,11 @@ public class MyC45 extends AbstractClassifier {
                 }
             }
             else if (splitAttribute.isNumeric()) {
-                
+                successors = new MyC45[2];
+                for (int i = 0; i < 2; i++) {
+                    successors[i] = new MyC45();
+                    successors[i].makeTree(splitData[i]);
+                }
             }
         }
     }
@@ -169,6 +176,17 @@ public class MyC45 extends AbstractClassifier {
         Instances[] splitData = splitData(data, attr);
         
         for (int i = 0; i < attr.numValues(); i++) {
+            if (splitData[i].numInstances() > 0) {
+                infoGain -= ((double) splitData[i].numInstances() / (double) data.numInstances()) * computeEntropy(splitData[i]);
+            }
+        }
+        return infoGain;
+    }
+    
+    public double computeInfoGainCont(Instances data, Attribute attr, double threshold) {
+        double infoGain = computeEntropy(data);
+        Instances[] splitData = splitDataCont(data, attr, threshold);
+        for (int i = 0; i < 2; i++) {
             if (splitData[i].numInstances() > 0) {
                 infoGain -= ((double) splitData[i].numInstances() / (double) data.numInstances()) * computeEntropy(splitData[i]);
             }
@@ -206,8 +224,50 @@ public class MyC45 extends AbstractClassifier {
             Instance inst = (Instance) instEnum.nextElement();
             splitData[(int) inst.value(attr)].add(inst);
         }
-        
         return splitData;
     }
     
+    public Instances[] splitDataCont(Instances data, Attribute attr, double threshold) {
+        Instances[] splitData = new Instances[2];
+        for (int i = 0; i < 2; i++) {
+            splitData[i] = new Instances(data, data.numInstances());
+        }
+
+        for (int i = 0; i < data.numInstances(); i++) {
+            double temp = data.instance(i).value(attr);
+            if (temp < threshold) {
+                splitData[0].add(data.instance(i));
+            } else {
+                splitData[1].add(data.instance(i));
+            }
+        }
+        return splitData;
+    }
+
+    public double bestThreshold(Instances data, Attribute attr) {
+        data.sort(attr);
+        
+        double m_ig = 0;
+        double bestThr = 0;
+        double classTemp = data.get(0).classValue();
+        double valueTemp = data.get(0).value(attr);
+        
+        Enumeration instEnum = data.enumerateInstances();
+        double dt;
+        while (instEnum.hasMoreElements()) {
+            Instance inst = (Instance) instEnum.nextElement();
+            if (classTemp != inst.classValue()) {
+                classTemp = inst.classValue();
+                dt = valueTemp;
+                valueTemp = inst.value(attr);
+                double threshold = dt + ((valueTemp - dt) / 2);
+                double igTemp = computeInfoGainCont(data, attr, threshold);
+                if (m_ig < igTemp) {
+                    m_ig = igTemp;
+                    bestThr = threshold;
+                }
+            }
+        }
+        return bestThr;
+    }
 }
