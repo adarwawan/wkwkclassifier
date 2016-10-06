@@ -1,11 +1,14 @@
 package org.wkwk.classifier;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import weka.classifiers.AbstractClassifier;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Utils;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -104,7 +107,7 @@ public class MyC45 extends AbstractClassifier {
         }
     }
     
-    public void makeTree(Instances data) {
+    public void makeTree(Instances data) throws Exception {
         if (isPruned) {
             data = prune(data);
         }
@@ -167,8 +170,39 @@ public class MyC45 extends AbstractClassifier {
     }
 
     // Implementasi
-    public Instances prune(Instances data) {
-        return data;
+    public Instances prune(Instances data) throws Exception {
+        ArrayList<Integer> unsignificantAttr = new ArrayList<>();
+        Enumeration attEnum = data.enumerateAttributes();
+        while (attEnum.hasMoreElements()) {            
+            Attribute att = (Attribute) attEnum.nextElement();
+            double currentGainRatio;
+            
+            if (att.isNominal()) {
+                currentGainRatio = computeInfoGain(data, att);                
+            }
+            else {
+                currentGainRatio = computeInfoGainCont(data, att, bestThreshold(data, att));
+            }
+            if (currentGainRatio < 1.0) {
+                unsignificantAttr.add(att.index() + 1);
+            }
+        }
+        if (unsignificantAttr.size() > 0) {
+            StringBuilder unsignificant = new StringBuilder();
+            int i = 0;
+            for (Integer current : unsignificantAttr) {
+                unsignificant.append(current.toString());
+                if (i != unsignificantAttr.size()-1) {
+                    unsignificant.append(",");
+                }
+                i++;
+            }
+            return removeAttr(data, unsignificant.toString());
+        }
+        else {
+            return data;
+        }   
+        
     }
 
     public double computeInfoGain(Instances data, Attribute attr) {
@@ -269,5 +303,13 @@ public class MyC45 extends AbstractClassifier {
             }
         }
         return bestThr;
+    }
+
+    private Instances removeAttr(Instances data, String attr) throws Exception {
+        Remove remove = new Remove(); 
+        remove.setAttributeIndices(attr); //Set which attributes are to be deleted (or kept if invert is true)
+        remove.setInputFormat(data); //Sets the format of the input instances.
+        Instances filterData = Filter.useFilter(data, remove); //Filters an entire set of instances through a filter and returns the new set.
+        return filterData;
     }
 }
