@@ -36,7 +36,6 @@ public class Access {
             System.exit(1);
         }
         
-        
         // Read Dataset (arff, csv)
         DataSource source = new DataSource(args[0]);
         DataSource testSource = new DataSource(args[1]);
