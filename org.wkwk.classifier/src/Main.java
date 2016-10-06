@@ -26,27 +26,30 @@ public class Main {
             System.out.println("7. Exit");
             
             menu = scanner.nextInt();
-            switch(menu) {
-            case 1:
-                menuHandler.loadDataMenu();
-                break;
-            case 2:
-                menuHandler.removeAttributeMenu();
-                break;
-            case 3:
-                menuHandler.buildClassifierMenu();
-                break;
-            case 4:
-                menuHandler.testModelMenu();
-                break;
-            case 5:
-                System.out.println("save model menu");
-                break;
-            case 6: 
-                System.out.println("load model menu");
-                break;
+            try {
+                switch (menu) {
+                    case 1:
+                        menuHandler.loadDataMenu();
+                        break;
+                    case 2:
+                        menuHandler.removeAttributeMenu();
+                        break;
+                    case 3:
+                        menuHandler.buildClassifierMenu();
+                        break;
+                    case 4:
+                        menuHandler.testModelMenu();
+                        break;
+                    case 5:
+                        menuHandler.saveModelMenu();
+                        break;
+                    case 6:
+                        menuHandler.loadModelMenu();
+                        break;
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
-            
         }
     }
 }

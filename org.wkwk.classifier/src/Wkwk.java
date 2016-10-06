@@ -43,7 +43,7 @@ public class Wkwk {
     
     public void saveModel(String filePath) throws IOException, Exception {
         if (classifier == null) {
-            throw new Exception();
+            throw new Exception("Classifier is not set");
         }
         
         ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath));
@@ -69,9 +69,16 @@ public class Wkwk {
         ois.close();
     }
     
-    public Evaluation evaluate() throws Exception {
+    public Evaluation evaluate(int evaluationID) throws Exception {
         Evaluation eval = new Evaluation(testData);
-        eval.crossValidateModel(classifier, testData, 10, new Random(1));
+        switch(evaluationID) {
+            case 1:
+                eval.evaluateModel(classifier, testData);
+                break;
+            case 2:
+                eval.crossValidateModel(classifier, testData, 10, new Random(1));
+                break;
+        }
         
         return eval;
     }

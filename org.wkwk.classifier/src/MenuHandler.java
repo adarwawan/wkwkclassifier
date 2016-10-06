@@ -67,7 +67,37 @@ public class MenuHandler {
     }
     
     public void testModelMenu() throws Exception {
-        Evaluation eval = wkwk.evaluate();
+        System.out.println("==========================");
+        System.out.println("===== Pilih Test Set =====");
+        System.out.println("==========================");
+        
+        System.out.println("1. Full train");
+        System.out.println("2. 10 folds cross validation");
+
+        int evaluationID = scanner.nextInt();
+        switch(evaluationID) {
+            case 1:
+                break;
+            case 2:
+                break;
+            default:
+                evaluationID = 1;
+                break;
+        }
+        
+        Evaluation eval = wkwk.evaluate(evaluationID);
         System.out.println(eval.toSummaryString());
+    }
+    
+    public void saveModelMenu() throws Exception {
+        System.out.println("File location: ");
+        String filePath = scanner.nextLine();
+        wkwk.saveModel(filePath);
+    }
+    
+    public void loadModelMenu() throws Exception {
+        System.out.println("Model location: ");
+        String filePath = scanner.nextLine();
+        wkwk.loadModel(filePath);
     }
 }
