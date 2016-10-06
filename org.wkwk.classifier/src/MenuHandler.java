@@ -1,5 +1,6 @@
 
 import java.util.Scanner;
+import org.wkwk.classifier.MyC45;
 import org.wkwk.classifier.MyId3;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
@@ -47,7 +48,7 @@ public class MenuHandler {
         
         System.out.println("1. Naive Bayes");
         System.out.println("2. MyId3");
-        System.out.println("3. J48");
+        System.out.println("3. MyC45");
         
         
         int classifierID = scanner.nextInt();
@@ -60,7 +61,7 @@ public class MenuHandler {
                 classifier = new MyId3();
                 break;
             case 3:
-                classifier = new J48();
+                classifier = new MyC45();
         }
         
         wkwk.setClassifier(classifier);
