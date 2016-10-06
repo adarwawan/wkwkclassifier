@@ -108,10 +108,6 @@ public class MyC45 extends AbstractClassifier {
     }
     
     public void makeTree(Instances data) throws Exception {
-        if (isPruned) {
-            data = prune(data);
-        }
-        
         if (data.numInstances() == 0) {
             splitAttribute = null;  
         }
@@ -166,6 +162,10 @@ public class MyC45 extends AbstractClassifier {
                     successors[i].makeTree(splitData[i]);
                 }
             }
+        }
+        
+        if (isPruned) {
+            data = prune(data);
         }
     }
 
