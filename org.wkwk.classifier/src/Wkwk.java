@@ -14,6 +14,7 @@ import weka.classifiers.trees.J48;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
+import weka.filters.supervised.instance.Resample;
 import weka.filters.unsupervised.attribute.Remove;
 
 /**
@@ -58,6 +59,14 @@ public class Wkwk {
         remove.setOptions(optionsArr);
         remove.setInputFormat(trainData);
         trainData = Filter.useFilter(trainData, remove);
+    }
+    
+    public void resample(String options) throws Exception {
+        String[] optionsArr = weka.core.Utils.splitOptions(options);
+        Resample resample = new Resample();
+        resample.setOptions(optionsArr);
+        resample.setInputFormat(trainData);
+        trainData = Filter.useFilter(trainData, resample);
     }
     
     public void loadModel(String filePath) throws IOException, ClassNotFoundException {

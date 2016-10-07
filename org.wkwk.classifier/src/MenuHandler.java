@@ -8,12 +8,6 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author husni
@@ -47,6 +41,15 @@ public class MenuHandler {
         String options = scanner.nextLine();
         if (!options.equals("cancel")) {
             wkwk.removeAttribute(options);
+        }
+    }
+    
+    public void resampleMenu() throws Exception {
+        System.out.println("Type cancel to cancel");
+        System.out.println("Resample parameter: ");
+        String options = scanner.nextLine();
+        if (!options.equals("cancel")) {
+            wkwk.resample(options);
         }
     }
     
@@ -116,4 +119,5 @@ public class MenuHandler {
         String filePath = scanner.nextLine();
         wkwk.loadModel(filePath);
     }
+    
 }
