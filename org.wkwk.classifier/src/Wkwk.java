@@ -52,12 +52,10 @@ public class Wkwk {
         oos.close();
     }
     
-    public void removeAttribute() throws Exception {
-        String[] options = new String[2];
-        options[0] = "-R";
-        options[1] = "1";
+    public void removeAttribute(String options) throws Exception {        
+        String[] optionsArr = weka.core.Utils.splitOptions(options);        
         Remove remove = new Remove();
-        remove.setOptions(options);
+        remove.setOptions(optionsArr);
         remove.setInputFormat(trainData);
         trainData = Filter.useFilter(trainData, remove);
     }
@@ -81,5 +79,22 @@ public class Wkwk {
         }
         
         return eval;
+    }
+    
+    public Evaluation evaluate(double percentage) throws Exception {
+        System.out.println("WOW");
+        int trainSize = (int) Math.round(trainData.numInstances() * percentage / 100);
+        int testSize = trainData.numInstances() - trainSize;
+        Instances train = new Instances(trainData, 0, trainSize);
+        Instances test = new Instances(trainData, trainSize, testSize);
+        
+        classifier.buildClassifier(train);
+        Evaluation eval = new Evaluation(test);
+        eval.evaluateModel(classifier, test);
+        return eval;
+    }
+    
+    public Instances getTrainData() {
+        return trainData;
     }
 }

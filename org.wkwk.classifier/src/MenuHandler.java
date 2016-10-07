@@ -6,6 +6,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.trees.J48;
+import weka.core.Instances;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -36,9 +37,17 @@ public class MenuHandler {
     }
     
     public void removeAttributeMenu() throws Exception {
+        Instances trainData = wkwk.getTrainData();
+        for (int i = 0 ; i < trainData.numAttributes(); i++) {
+            System.out.println(trainData.attribute(i));
+        }
+        
+        System.out.println("Type cancel to cancel");
         System.out.println("Remove parameter: ");
         String options = scanner.nextLine();
-        wkwk.removeAttribute();
+        if (!options.equals("cancel")) {
+            wkwk.removeAttribute(options);
+        }
     }
     
     public void buildClassifierMenu() throws Exception {
@@ -74,20 +83,26 @@ public class MenuHandler {
         
         System.out.println("1. Full train");
         System.out.println("2. 10 folds cross validation");
+        System.out.println("3. Percentage Split");
 
         int evaluationID = scanner.nextInt();
-        switch(evaluationID) {
-            case 1:
-                break;
-            case 2:
-                break;
-            default:
-                evaluationID = 1;
-                break;
-        }
+
         
-        Evaluation eval = wkwk.evaluate(evaluationID);
+        Evaluation eval = null;
+        if (evaluationID == 3) {
+            System.out.println("Persentase: ");
+            double percentage = scanner.nextDouble();
+            eval = wkwk.evaluate(percentage);
+        } else {
+            eval = wkwk.evaluate(evaluationID);
+        }
+        System.out.println("=== Summary ===");
         System.out.println(eval.toSummaryString());
+        
+        System.out.println("\n=== Matriks ===");
+        System.out.println(eval.toMatrixString());
+        
+        
     }
     
     public void saveModelMenu() throws Exception {
